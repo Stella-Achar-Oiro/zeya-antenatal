@@ -4,6 +4,9 @@ An AI-powered maternal health chatbot that answers antenatal questions in Englis
 
 Built as a Week 1 project for the [AI in Production](https://github.com/ed-donner/production) course.
 
+**Live demo:** [zeya-antenatal.vercel.app](https://zeya-antenatal.vercel.app)  
+**API:** [zeya-antenatal-api.vercel.app](https://zeya-antenatal-api.vercel.app/api/health)
+
 ---
 
 ## Stack
