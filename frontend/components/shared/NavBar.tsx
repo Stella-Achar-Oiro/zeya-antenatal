@@ -1,4 +1,5 @@
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import Image from "next/image";
 import Link from "next/link";
 import { colors } from "@/styles/tokens";
 
@@ -8,7 +9,8 @@ export function NavBar() {
       style={{ backgroundColor: colors.sage }}
       className="flex items-center justify-between px-6 py-3 shadow-sm"
     >
-      <Link href="/" className="flex items-center gap-2">
+      <Link href="/" className="flex items-center gap-2.5">
+        <Image src="/logo.svg" alt="Zeya logo" width={28} height={28} priority />
         <span className="text-xl font-semibold text-white tracking-wide">
           Zeya Antenatal
         </span>
@@ -32,7 +34,7 @@ export function NavBar() {
           >
             Chat
           </Link>
-          <UserButton afterSignOutUrl="/" />
+          <UserButton />
         </SignedIn>
       </div>
     </nav>
