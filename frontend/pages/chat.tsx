@@ -1,6 +1,7 @@
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/router";
 import { useState, useEffect, useCallback } from "react";
+import { Leaf } from "lucide-react";
 import { NavBar } from "@/components/shared/NavBar";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { MessageList } from "@/components/chat/MessageList";
@@ -8,9 +9,6 @@ import { ChatInput } from "@/components/chat/ChatInput";
 import { streamChat } from "@/lib/api";
 import { colors } from "@/styles/tokens";
 import type { Message } from "@/components/chat/MessageBubble";
-
-// Lines detected by the backend danger-sign prefix
-const DANGER_PREFIX = "🚨";
 
 export default function Chat() {
   const { user, isLoaded } = useUser();
@@ -21,7 +19,6 @@ export default function Chat() {
   const [streaming, setStreaming] = useState(false);
   const [language] = useState<"en" | "sw">("en");
 
-  // Redirect if not signed in
   useEffect(() => {
     if (isLoaded && !user) router.replace("/");
   }, [isLoaded, user, router]);
@@ -30,12 +27,10 @@ export default function Chat() {
     async (text: string) => {
       if (!user || streaming) return;
 
-      // Add user bubble immediately
       setMessages((prev) => [...prev, { role: "user", content: text }]);
       setDangerText(null);
       setStreaming(true);
 
-      // Placeholder assistant bubble that we'll fill in as chunks arrive
       const assistantIndex = messages.length + 1;
       setMessages((prev) => [...prev, { role: "assistant", content: "", streaming: true }]);
 
@@ -63,29 +58,31 @@ export default function Chat() {
 
           for (const line of lines) {
             if (!line.startsWith("data: ")) continue;
-            const chunk = line.slice(6);
-            if (chunk === "[DONE]") continue;
+            const raw = line.slice(6).trim();
+            if (raw === "[DONE]") continue;
 
-            // Danger sign prefix — pull it off and show alert
-            if (chunk.startsWith(DANGER_PREFIX)) {
-              setDangerText(chunk);
+            let token: string;
+            try {
+              token = JSON.parse(raw).token ?? "";
+            } catch {
+              continue;
+            }
+
+            // Backend prefixes danger-sign emergency responses with 🚨
+            if (token.startsWith("🚨")) {
+              setDangerText(token);
               accum = "";
             } else {
-              accum += chunk;
+              accum += token;
               setMessages((prev) => {
                 const next = [...prev];
-                next[assistantIndex] = {
-                  role: "assistant",
-                  content: accum,
-                  streaming: true,
-                };
+                next[assistantIndex] = { role: "assistant", content: accum, streaming: true };
                 return next;
               });
             }
           }
         }
 
-        // Mark streaming done
         setMessages((prev) => {
           const next = [...prev];
           if (next[assistantIndex]) {
@@ -128,8 +125,8 @@ export default function Chat() {
 
       <div className="flex-1 flex flex-col max-w-2xl w-full mx-auto">
         {messages.length === 0 ? (
-          <div className="flex-1 flex flex-col items-center justify-center gap-2 text-center px-6">
-            <p style={{ color: colors.sage }} className="text-3xl">🌿</p>
+          <div className="flex-1 flex flex-col items-center justify-center gap-3 text-center px-6">
+            <Leaf size={36} style={{ color: colors.sage }} />
             <p style={{ color: colors.mid }} className="font-medium">
               Hi{user.firstName ? `, ${user.firstName}` : ""}! I&apos;m Zeya.
             </p>

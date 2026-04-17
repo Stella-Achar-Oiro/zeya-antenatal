@@ -1,5 +1,6 @@
 import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 import { useRouter } from "next/router";
+import { Leaf, TriangleAlert, Languages } from "lucide-react";
 import { NavBar } from "@/components/shared/NavBar";
 import { colors } from "@/styles/tokens";
 
@@ -43,13 +44,13 @@ export default function Home() {
         </div>
 
         <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-2xl w-full text-left">
-          {FEATURES.map(({ icon, title, body }) => (
+          {FEATURES.map(({ Icon, title, body }) => (
             <div
               key={title}
               style={{ backgroundColor: colors.sageLight, borderColor: colors.sageLightMid }}
               className="rounded-xl border p-5"
             >
-              <div className="text-2xl mb-2">{icon}</div>
+              <Icon size={22} style={{ color: colors.sage }} className="mb-3" />
               <h3 style={{ color: colors.sageDark }} className="font-semibold mb-1">
                 {title}
               </h3>
@@ -73,17 +74,17 @@ export default function Home() {
 
 const FEATURES = [
   {
-    icon: "🌿",
+    Icon: Leaf,
     title: "Safe pregnancy guidance",
     body: "Evidence-based answers on nutrition, symptoms, and what to expect each trimester.",
   },
   {
-    icon: "🚨",
+    Icon: TriangleAlert,
     title: "Danger sign alerts",
     body: "Instantly recognises warning signs and directs you to emergency care.",
   },
   {
-    icon: "🗣️",
+    Icon: Languages,
     title: "English & Swahili",
     body: "Chat in the language you're most comfortable with — switch any time.",
   },
