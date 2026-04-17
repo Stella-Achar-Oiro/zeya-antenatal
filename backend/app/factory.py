@@ -68,4 +68,8 @@ def create_app() -> FastAPI:
     app.include_router(register.router, prefix="/api")
     app.include_router(chat.router, prefix="/api")
 
+    @app.get("/")
+    async def root() -> dict:
+        return {"service": "zeya-antenatal", "status": "ok", "docs": "/docs"}
+
     return app
